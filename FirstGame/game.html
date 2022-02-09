@@ -103,10 +103,32 @@
             stars = this.physics.add.group({
                 key: 'star',
                 repeat: 11,
-                setXY: { x: 12, y: 0, stepX: 70 }
+                setXY: { x: 12, y: 20, stepX: 70 }
             });
 
             stars.children.iterate(function (child) {
+                child.setBounceY(Phaser.Math.FloatBetween(0.2, 0.5));
+            });
+            //////////////////////////////////////////////////////////////////////
+
+            //////////////Add Bombs////////////////
+            bombs = this.physics.add.group({
+                key: 'bomb',
+                repeat: 2,
+                setXY: { x: (Math.floor(Math.random() * (100 - 0 + 1)) + 50), y: (Math.floor(Math.random() * (100 - 0 + 1)) + 50), stepX: 70 }
+            });
+
+            bombs.children.iterate(function (child) {
+                child.setBounceY(Phaser.Math.FloatBetween(0.2, 0.5));
+            });
+
+            bombs1 = this.physics.add.group({
+                key: 'bomb',
+                repeat: 1,
+                setXY: { x: (Math.floor(Math.random() * (100 - 0 + 1)) + 300), y: (Math.floor(Math.random() * (100 - 0 + 1)) + 50), stepX: 70 }
+            });
+
+            bombs1.children.iterate(function (child) {
                 child.setBounceY(Phaser.Math.FloatBetween(0.2, 0.5));
             });
             //////////////////////////////////////////////////////////////////////
@@ -118,7 +140,11 @@
             //////////////////////Colide Movable Elements To The Ground///////////////
             this.physics.add.collider(player, platforms); //Colde player on the ground
             this.physics.add.collider(stars, platforms); //Colde stars on the ground
+            this.physics.add.collider(bombs, platforms); //Colde bombs on the ground
+            this.physics.add.collider(bombs1, platforms); //Colde bombs on the ground
             this.physics.add.overlap(player, stars, collectStar, null, this); //When user touches the star then destroy or consume it
+            this.physics.add.collider(player, bombs, hitBomb, null, this); //When user hit any bomb then game over
+            this.physics.add.collider(player, bombs1, hitBomb, null, this); //When user hit any bomb then game over
             /////////////////////////////////////////////////////////////////////////
         }
 
@@ -163,6 +189,19 @@
                 gameOver = true;
         }
 
+        /**
+         * hitBomb function
+         * Game over when user colides with it
+         **/
+
+        function hitBomb(player, bomb) {
+            bomb.disableBody(true, true);
+            removeAllElements();
+        }
+
+        function removeAllElements() {
+            gameOver = true;
+        }
     </script>
 
 </body>
