@@ -67,13 +67,13 @@
             this.trees = this.add.tileSprite(0, 240, 800, 320, 'trees')
                 .setOrigin(0, 0);
 
-            this.platforms = this.physics.add.staticGroup();
+            platforms = this.physics.add.staticGroup();
 
-            this.platforms.create(400, 568, 'ground').setScale(2).refreshBody();//Base ground
+            platforms.create(400, 568, 'ground').setScale(2).refreshBody();//Base ground
             /////////Grounds above base/////////
-            this.platforms.create(600, 400, 'ground');
-            this.platforms.create(50, 250, 'ground');
-            this.platforms.create(750, 220, 'ground');
+            platforms.create(600, 400, 'ground');
+            platforms.create(50, 250, 'ground');
+            platforms.create(750, 200, 'ground');
             /////////////////////////////////////
 
             player = this.physics.add.sprite(100, 450, 'dude') //Add Player
@@ -108,12 +108,21 @@
             //////////////Add Stars////////////////
             stars = this.physics.add.group({
                 key: 'star',
-                repeat: 11,
+                repeat: 30,
                 setXY: { x: 12, y: 20, stepX: 70 }
             });
 
+            // stars.children.iterate(function (child) {
+            //     child.setBounceY(Phaser.Math.FloatBetween(0.2, 0.5));
+            // });
+
             stars.children.iterate(function (child) {
-                child.setBounceY(Phaser.Math.FloatBetween(0.2, 0.5));
+                //  Give each star a slightly different bounce
+                child.setBounce(1, Phaser.Math.FloatBetween(1, 0.8));
+                child.setCollideWorldBounds(true);
+                child.setVelocity(Phaser.Math.Between(-200, 200), 20);
+                child.setDragX(4);
+
             });
             //////////////////////////////////////////////////////////////////////
 
@@ -144,10 +153,10 @@
             ////////////////////////////////////////////////////////////////////////////////
 
             //////////////////////Colide Movable Elements To The Ground///////////////
-            this.physics.add.collider(player, this.platforms); //Colde player on the ground
-            this.physics.add.collider(stars, this.platforms); //Colde stars on the ground
-            this.physics.add.collider(bombs, this.platforms); //Colde bombs on the ground
-            this.physics.add.collider(bombs1, this.platforms); //Colde bombs on the ground
+            this.physics.add.collider(player, platforms); //Colde player on the ground
+            this.physics.add.collider(stars, platforms); //Colde stars on the ground
+            this.physics.add.collider(bombs, platforms); //Colde bombs on the ground
+            this.physics.add.collider(bombs1, platforms); //Colde bombs on the ground
             this.physics.add.overlap(player, stars, collectStar, null, this); //When user touches the star then destroy or consume it
             this.physics.add.collider(player, bombs, hitBomb, null, this); //When user hit any bomb then game over
             this.physics.add.collider(player, bombs1, hitBomb, null, this); //When user hit any bomb then game over
@@ -163,23 +172,42 @@
                 gameOverMessage(this);
                 player.setVelocityX(0);
                 player.anims.play('turn');
+                player.setBounce(1.5); //Set bounce weight
+                player.setCollideWorldBounds(false); //Set the Colider for the player
+              
+                for(let i=0;i<stars.children.entries.length;i++){
+                    stars.children.entries[i].destroy();
+                }
+
+                for(let i=0;i<bombs.children.entries.length;i++){
+                    bombs.children.entries[i].destroy();
+                }
+                
+                for(let i=0;i<bombs1.children.entries.length;i++){
+                    bombs1.children.entries[i].destroy();
+                }
+                
+                for(let i=1;i<platforms.children.entries.length;i++){
+                    platforms.children.entries[i].destroy();
+                }
+
                 return;
             }
 
             if (cursors.left.isDown) { //When user press left arrow key
                 this.bg.tilePositionX -= 2;
                 this.trees.tilePositionX -= 3;
-                this.platforms.tilePositionX -= 3;
-                // this.platforms.displayWidth -= 20;
-                player.setVelocityX(-120);
+                platforms.tilePositionX -= 3;
+                // platforms.displayWidth -= 20;
+                player.setVelocityX(-160);
                 player.anims.play('left', true);
             }
             else if (cursors.right.isDown) { //When user press right arrow key
                 this.bg.tilePositionX += 2;
                 this.trees.tilePositionX += 3;
-                this.platforms.tilePositionX += 3;
-                // this.platforms.displayWidth += 20;
-                player.setVelocityX(120);
+                platforms.tilePositionX += 3;
+                // platforms.displayWidth += 20;
+                player.setVelocityX(160);
                 player.anims.play('right', true);
             }
             else { //Default state when no right and left arrow key is pressed
