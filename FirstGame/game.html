@@ -37,7 +37,7 @@
         var game = new Phaser.Game(config); //Initialize the game with default configuration
 
         function gameOverMessage(e) {
-            scoreText = e.add.text(16, 50, 'Game Over!!!!!!!!', { fontSize: '32px', fill: '#000' });
+            scoreText = e.add.text(16, 50, 'Game Over!!!!!!!!', { fontSize: '32px', fill: '#fff' });
         }
 
         /**
@@ -140,7 +140,7 @@
             //////////////////////////////////////////////////////////////////////
 
             ///////////////////////Add Score Text On The Top/////////////////////////////////
-            scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
+            scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#fff' });
             ////////////////////////////////////////////////////////////////////////////////
 
             //////////////////////Colide Movable Elements To The Ground///////////////
