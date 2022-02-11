@@ -47,7 +47,9 @@
         function preload() {
             this.load.setBaseURL('http://labs.phaser.io/'); //Load the base url from where assets will be loaded
 
-            this.load.image('sky', 'src/games/firstgame/assets/sky.png');
+            // this.load.image('sky', 'src/games/firstgame/assets/sky.png');
+            this.load.image('sky', 'assets/skies/ms3-sky.png');
+            this.load.image('trees', 'assets/skies/ms3-trees.png');
             this.load.image('ground', 'src/games/firstgame/assets/platform.png');
             this.load.image('star', 'src/games/firstgame/assets/star.png');
             this.load.image('bomb', 'src/games/firstgame/assets/bomb.png');
@@ -59,15 +61,19 @@
          * Add assets to the UI
          **/
         function create() {
-            this.add.image(400, 300, 'sky');
+            // this.add.image(400, 300, 'sky');
+            this.bg = this.add.tileSprite(0, 0, 800, 296, 'sky')
+                .setOrigin(0, 0);
+            this.trees = this.add.tileSprite(0, 240, 800, 320, 'trees')
+                .setOrigin(0, 0);
 
-            platforms = this.physics.add.staticGroup();
+            this.platforms = this.physics.add.staticGroup();
 
-            platforms.create(400, 568, 'ground').setScale(2).refreshBody();//Base ground
+            this.platforms.create(400, 568, 'ground').setScale(2).refreshBody();//Base ground
             /////////Grounds above base/////////
-            platforms.create(600, 400, 'ground');
-            platforms.create(50, 250, 'ground');
-            platforms.create(750, 220, 'ground');
+            this.platforms.create(600, 400, 'ground');
+            this.platforms.create(50, 250, 'ground');
+            this.platforms.create(750, 220, 'ground');
             /////////////////////////////////////
 
             player = this.physics.add.sprite(100, 450, 'dude') //Add Player
@@ -138,10 +144,10 @@
             ////////////////////////////////////////////////////////////////////////////////
 
             //////////////////////Colide Movable Elements To The Ground///////////////
-            this.physics.add.collider(player, platforms); //Colde player on the ground
-            this.physics.add.collider(stars, platforms); //Colde stars on the ground
-            this.physics.add.collider(bombs, platforms); //Colde bombs on the ground
-            this.physics.add.collider(bombs1, platforms); //Colde bombs on the ground
+            this.physics.add.collider(player, this.platforms); //Colde player on the ground
+            this.physics.add.collider(stars, this.platforms); //Colde stars on the ground
+            this.physics.add.collider(bombs, this.platforms); //Colde bombs on the ground
+            this.physics.add.collider(bombs1, this.platforms); //Colde bombs on the ground
             this.physics.add.overlap(player, stars, collectStar, null, this); //When user touches the star then destroy or consume it
             this.physics.add.collider(player, bombs, hitBomb, null, this); //When user hit any bomb then game over
             this.physics.add.collider(player, bombs1, hitBomb, null, this); //When user hit any bomb then game over
@@ -161,11 +167,19 @@
             }
 
             if (cursors.left.isDown) { //When user press left arrow key
-                player.setVelocityX(-160);
+                this.bg.tilePositionX -= 2;
+                this.trees.tilePositionX -= 3;
+                this.platforms.tilePositionX -= 3;
+                // this.platforms.displayWidth -= 20;
+                player.setVelocityX(-120);
                 player.anims.play('left', true);
             }
             else if (cursors.right.isDown) { //When user press right arrow key
-                player.setVelocityX(160);
+                this.bg.tilePositionX += 2;
+                this.trees.tilePositionX += 3;
+                this.platforms.tilePositionX += 3;
+                // this.platforms.displayWidth += 20;
+                player.setVelocityX(120);
                 player.anims.play('right', true);
             }
             else { //Default state when no right and left arrow key is pressed
